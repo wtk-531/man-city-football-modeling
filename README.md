@@ -3,60 +3,54 @@
 **Bayesian team-strength updating, probabilistic score forecasting, and exploratory dynamic modeling**  
 *Version 1 · September 2026*
 
-This project develops a sequential forecasting framework for **Manchester City Premier League matches**. The operational Version 1 model updates league-wide team strengths as new results arrive, converts Manchester City's pre-match strength difference and venue into expected goals, and produces full score and outcome probabilities.
+This project models Manchester City's Premier League matches. It combines league-wide Bayesian strength updates with a Poisson score model, while documenting experiments with short-term dynamics, coaching changes, midfield composition, and transfer-based priors.
 
-The repository also documents several ideas that were tested but **not** retained in the final forecasting pipeline, including short-term residual dynamics, coaching-regime scenarios, midfield composition models, and transfer-based prior adjustments. A major goal of the project is not only to produce forecasts, but also to record which modeling ideas were supported by the available evidence and which were not.
-
-> **Project status:** Version 1 is frozen for prospective evaluation during the 2026/27 season. Score-model coefficients remain fixed during the season; team strengths continue to update as completed results are entered.
+> **Project status:** Version 1 is frozen for prospective evaluation during 2026/27. Model parameters remain fixed during the season; team-strength estimates update as completed results are entered.
 
 ## About This Project
 
-I'm an undergraduate studying applied mathematics and a Manchester City fan. I started this as an independent project to connect my interest in football with methods I had been learning in Bayesian inference, statistical modeling, linear algebra, and dynamical systems.
+I'm an undergraduate studying applied mathematics and a Manchester City fan. I started this independent project to connect my interest in football with what I had been learning about Bayesian inference, statistical modeling, linear algebra, and dynamical systems.
 
-The project gradually became less about building the most complicated possible predictor and more about learning how to make modeling decisions: how to define a useful latent quantity, how to separate prediction from interpretation, how to evaluate extensions against simpler baselines, and how to keep a model honest when an appealing idea does not improve out-of-sample performance.
+It became an opportunity to practice the whole modeling process: defining assumptions, building representations, comparing models, and learning from results that challenged the original idea. I welcome feedback and discussion from others interested in football analytics, Bayesian methods, or applied mathematics.
 
-I am sharing the project as part of that learning process and would be happy to exchange ideas with others interested in football analytics, Bayesian methods, applied mathematics, or statistical modeling.
+## Where to Start
 
-## Project Questions
+- **Read the project narrative:** [Full Integrated Reflection](docs/Manchester_City_Project_Full_Integrated_Reflection.ipynb) covers the reasoning, experiments, results, and limitations.
+- **Use the predictor:** [Standalone Forecaster](forecaster/CITY_FORECASTER_STANDALONE.ipynb) provides the interface for recording results and predicting the next City match. See [Quick Start](#quick-start).
+- **Check the data:** [Data Sources and Provenance](docs/DATA_SOURCES_AND_PROVENANCE.ipynb) documents providers, transformations, and dataset lineage.
 
-The project is organized around four main questions:
+## Research Questions and Development
 
-1. Can recent match results be used to maintain a meaningful, evolving estimate of team strength?
-2. Can pre-match strength difference and venue be translated into a useful probability distribution over Manchester City scores?
-3. Do short-term performance dynamics add predictive information beyond strength and venue?
-4. Can coaching changes and midfield composition be represented mathematically without confusing structural interpretation with validated forecast improvement?
+The project asks whether evolving team strength can support useful score probabilities, and whether recent performance, coaching changes, or midfield composition add information beyond strength and venue.
 
-## Version 1 Architecture
+The notebooks follow the development sequence below. These are historical research stages; they do not all rerun when a new match result is entered.
 
-The deployed forecasting chain is intentionally compact:
+| Notebook | Main purpose |
+|---|---|
+| [team_strength.ipynb](notebooks/team_strength.ipynb) | Construct opponent-adjusted multivariate team-performance states and instability measures. |
+| [strength_index_validation.ipynb](notebooks/strength_index_validation.ipynb) | Build a scalar strength index and evaluate its weights. |
+| [strength_index_pca_elo_validation.ipynb](notebooks/strength_index_pca_elo_validation.ipynb) | Combine home/away information with PCA and compare the resulting index with ClubElo. |
+| [E0_E1_bridge.ipynb](notebooks/E0_E1_bridge.ipynb) | Initialize promoted teams using Championship information. |
+| [bayesian_prior.ipynb](notebooks/bayesian_prior.ipynb) | Calibrate season-opening priors and sequential league-wide strength updates. |
+| [dynamic_system_model.ipynb](notebooks/dynamic_system_model.ipynb) | Evaluate City residual dynamics, structural scenarios, and score forecasts. |
 
-```text
-completed EPL results
-        ↓
-Bayesian team-strength update
-        ↓
-pre-match strength difference (ΔS) + venue
-        ↓
-Poisson goal models for GF and GA
-        ↓
-exact-score probabilities + W/D/L probabilities
-```
+## Operational Version 1
 
-### 1. Bayesian team-strength layer
+During the season, the workflow is to record completed league results, update strengths, and save a probability forecast for the next City fixture.
 
-The model maintains a league-wide latent strength estimate for each club. Season-opening uncertainty is scaled using a common fitted variance parameter and a team-specific instability measure from the previous season:
+### Bayesian strength updates
+
+Each club has a latent strength estimate. Season-opening uncertainty uses a common fitted variance scale, $Q_0$, multiplied by the club's relative instability in the previous season:
 
 $$
-P_{i,0}=Q_0M_{i,s-1}.
+P_{i,0}^{(s)}=Q_0M_{i,s-1}.
 $$
 
-As completed league results are recorded, the strength vector and its covariance matrix are updated sequentially. The resulting pre-match difference between City and its opponent, $\Delta S_t$, is the main strength input to the score model.
+Recorded results update the strength vector and its covariance matrix. The pre-match difference between City and its opponent, $\Delta S_t$, then enters the score model. ClubElo serves as an external comparison benchmark for the internally constructed index; its ratings are not direct inputs to issued forecasts.
 
-ClubElo is used as an **external comparison benchmark** for the internally constructed strength representation; ClubElo values are not directly inserted into the operational forecasting model.
+### Score probabilities
 
-### 2. Score model
-
-Manchester City's goals for and goals against are modeled separately with log-linked Poisson regressions:
+Separate Poisson regressions model City goals for ($GF$) and against ($GA$):
 
 $$
 \log\lambda_{o,t}
@@ -64,41 +58,22 @@ $$
 \qquad o\in\{GF,GA\}.
 $$
 
-The two estimated goal rates are combined using conditionally independent Poisson distributions. The model outputs:
+Here, $Home_t$ indicates a City home match. Combining two conditionally independent Poisson distributions gives expected goals, win/draw/loss probabilities, and exact-score probabilities. The interface displays the five most likely scores, a 0–5 score grid, and the probability mass outside that grid.
 
-- expected Manchester City and opponent goals;
-- win, draw, and loss probabilities;
-- the five most likely exact scores;
-- a displayed 0–5 score-probability grid;
-- probability mass outside the displayed 0–5 grid.
+## Exploratory Extensions
 
-During the 2026/27 season, the Poisson regression coefficients remain frozen. Only the league-strength state changes as new results are entered.
+- **Short-term dynamics:** AR, VAR, and latent-state models tested persistence in opponent-adjusted possession, shots, shot-on-target rate, and finishing efficiency. They did not reliably improve the reported historical comparisons and are excluded from operational Version 1.
+- **Coaching scenarios:** Chelsea's Maresca-era performance was compared with an earlier baseline to construct conditional scenarios for City. The current analysis does not isolate the coaching effect from simultaneous squad and tactical changes.
+- **Midfield composition:** SVD reduces player information to six components, which a regularized model maps to four team-performance dimensions with strength controls. Same-season player statistics and minutes limit its interpretation as a preseason forecasting model.
+- **Transfer adjustments:** Transfer expenditure and income were tested as prior adjustments but were not retained in the final specification.
 
-## What Was Tested Beyond the Final Model
-
-### Short-term dynamics
-
-I tested whether recent deviations in four performance dimensions — possession, shots, shot-on-target rate, and finishing efficiency — contained useful predictive information after controlling for strength difference and venue.
-
-AR, VAR, and latent-state formulations were compared with simpler no-dynamics baselines. In the saved historical comparisons, these extensions did **not** provide a reliable improvement, so they were excluded from the Version 1 operational rates.
-
-### Coaching-regime scenarios
-
-A separate analysis examined Chelsea's performance during the Maresca era relative to an earlier baseline. The purpose was to explore how a coaching-associated performance signature might be represented and transferred into a conditional scenario for City.
-
-This is treated as **structural analysis rather than a causal estimate**. Simultaneous squad and tactical changes make it impossible to identify a pure coaching effect from the available data.
-
-### Midfield composition
-
-Player information was reduced with SVD and mapped to team-level performance using a regularized linear model with strength controls. This module is useful for exploring conditional squad scenarios, but same-season player statistics and minutes limit its use as a clean preseason forecast input.
-
-For that reason, the midfield model remains separate from the operational Poisson score model.
+Scenario adaptation equations were also examined using eigenvalue, Lyapunov, and trajectory checks. Their fixed-reference stability follows from the assumed dynamics; these checks do not establish real adaptation speeds or forecasting accuracy. The structural scenarios remain separate from issued score probabilities.
 
 ## Historical Evaluation
 
-The strength-and-venue score model was originally selected using 2024/25 validation data. Its mean exact-score negative log-likelihood was **3.0992**, compared with **3.2128** for a venue-only specification.
+The City analysis uses 114 Premier League matches across 2023/24–2025/26. The first season supplies initial training data, the second supports model selection, and the third provides a historical evaluation. Models are refitted on the first 76 matches before that evaluation. The operational score model is subsequently refitted on all 114 matches for 2026/27.
 
-After refitting the selected specifications, the 38-match 2025/26 historical comparison produced the following results:
+The strength-and-venue specification was selected on 2024/25 validation data: mean exact-score negative log-likelihood (NLL) was **3.0992**, versus **3.2128** for venue only. The 38-match 2025/26 comparison, including a later exploratory state extension, was:
 
 | Model | Mean score NLL | GF RMSE | GA RMSE |
 |---|---:|---:|---:|
@@ -106,145 +81,75 @@ After refitting the selected specifications, the 38-match 2025/26 historical com
 | Strength + venue | 2.9274 | 1.2285 | 1.0230 |
 | Strength + venue + latent state | 2.9910 | 1.2368 | 1.1046 |
 
-Lower values are better. The selected strength-and-venue model slightly improved goals-for RMSE relative to venue only, but it was worse on exact-score NLL and goals-against RMSE. Its Top-5 score set contained the realized score in **17 of 38 matches**, versus **22 of 38** for venue only.
+Lower values are better. NLL evaluates the probability assigned to the realized score; RMSE evaluates predicted goal counts. The selected model slightly improved goals-for RMSE but performed worse on score NLL and goals-against RMSE than venue only. Its Top 5 included the actual score in **17 of 38 matches**, compared with **22 of 38** for venue only.
 
-The tested dynamic extensions also failed to improve their matched historical benchmarks. I therefore do **not** interpret the project as evidence that the more complex model is universally superior. Instead, Version 1 preserves the validation-selected specification as a fixed model for prospective testing while keeping the mixed historical evidence visible.
+These results do not establish a consistent advantage over the simpler benchmark. Version 1 retains the validation-selected specification for prospective testing. Later development revisited 2025/26, and some structural representations use pooled historical information, so this evidence comprises chronological historical comparisons and exploratory analyses, not a fully untouched end-to-end test.
 
-## Why Keep the Simpler Version?
-
-One of the main lessons from the project is that mathematical structure, interpretability, and predictive accuracy are different things.
-
-A dynamic system can be stable without improving forecasts. A plausible football narrative can be measurable without being causal. A richer feature set can describe a match more completely while still failing to predict the next one better.
-
-For that reason, Version 1 deliberately keeps the deployed model narrower than the full research process. The more exploratory modules remain documented, but they are not silently added to the issued forecast probabilities.
-
-## Operational Forecaster
-
-The standalone package is the user-facing version of the model. It can run without rerunning the historical research notebooks.
-
-Its saved state contains:
-
-- the frozen 2026/27 Bayesian parameters;
-- the corrected 2026/27 league roster and opening priors;
-- the frozen `Strength_Home` Poisson score model;
-- completed results already entered into the season state;
-- an append-only archive of later results and issued forecasts.
-
-The operating rule is chronological: completed results dated **strictly before** a fixture are entered first, the City forecast is saved before the fixture, and later results update the strength state for future predictions.
-
-Because Version 1 stores calendar dates rather than kickoff times, results from the same date should not be entered before that date's City forecast is saved.
+To avoid choosing the model retrospectively based on the final historical season, Version 1 keeps the specification selected using the earlier validation period.
 
 ## Quick Start
 
-The standalone forecaster requires Python plus the packages listed in `requirements.txt`.
+The standalone forecaster runs without rerunning the historical research notebooks or loading their raw datasets. From a terminal at the repository root:
 
 ```bash
+cd forecaster
 python -m pip install -r requirements.txt
 ```
 
-Then:
+1. Open `forecaster/` as your working folder in VS Code, then open `CITY_FORECASTER_STANDALONE.ipynb`.
+2. Select the Python environment where the requirements were installed and run the setup cell.
+3. Enter completed league results dated before the next City fixture, including other teams' matches when available.
+4. Enter the fixture date, opponent, and City venue, then save the forecast before kickoff.
+5. After the match, record the result and review the season report.
 
-1. Open `CITY_FORECASTER_STANDALONE.ipynb`.
-2. Select the Python environment in which the requirements were installed.
-3. Run the setup cell.
-4. Enter completed results dated before the next City fixture.
-5. Enter the opponent, venue, and fixture date and save the forecast before kickoff.
-6. After the match, record the result and review the season report.
-7. Keep `season_state.json` between sessions; it stores the evolving model state and forecast history.
+**Date rule:** Version 1 uses calendar dates rather than kickoff times. Save City's forecast before entering any results bearing that fixture's date, including other teams' results from earlier that day.
+
+Keep and back up `season_state.json` between sessions. It stores the frozen parameters, opening priors, recorded results, and saved forecasts needed to continue the season. Only forecasts recorded before their matches count as prospective evidence; retrospective replays should be identified separately.
 
 ## Data Sources
 
-The project combines data from several public football-data providers. Not every collected variable is used by the deployed model; some sources support validation or exploratory modules only.
+The table identifies the historical sources used during development. Some support the operational model; others support validation or exploratory work.
 
-| Source | Main role in the project |
+| Source | Data and role in this project |
 |---|---|
-| [Football-Data.co.uk](https://www.football-data.co.uk/data.php) | Premier League and Championship results and match statistics; team-strength construction, promotion analysis, and Bayesian updating |
-| [ClubElo](https://clubelo.com/) | External comparison for the internally constructed strength index |
-| [FBref / Sports Reference](https://fbref.com/en/) | Manchester City and Chelsea match logs and historical player/team tables |
-| [FotMob](https://www.fotmob.com/en-GB/leagues/47/stats/the-premier-league) | Player profiles and team-season possession statistics used in structural analyses |
-| [Understat](https://understat.com/league/EPL) | Expected-goal information and exploratory historical match extracts |
-| [Transfermarkt](https://www.transfermarkt.com/premier-league/transfers/wettbewerb/GB1/) | Summer transfer expenditure/income used in exploratory prior-adjustment tests |
+| [Football-Data.co.uk](https://www.football-data.co.uk/data.php) | Premier League and Championship results and match statistics for team-strength construction, promotion analysis, and Bayesian updating; also supplies shot, shot-on-target, and finishing outcomes for the midfield bridge. |
+| [ClubElo](https://clubelo.com/) | Historical club ratings used as an external comparison for the internally constructed strength index. |
+| [FBref / Sports Reference](https://fbref.com/en/) | City and Chelsea match-log exports used in performance and coaching analyses; additional historical player/team tables collected during development. |
+| [FotMob](https://www.fotmob.com/en-GB/leagues/47/stats/the-premier-league) | Player-statistic extracts used for midfield profiles, plus a separate team-season possession extract used in the midfield bridge. |
+| [Understat](https://understat.com/league/EPL) | Historical expected-goal information and match extracts retained for exploratory analysis. |
+| [Transfermarkt](https://www.transfermarkt.com/premier-league/transfers/wettbewerb/GB1/) | Summer-window expenditure and income used in exploratory tests of transfer-related prior adjustments. |
 
-A separate provenance document records the lineage of the major local datasets and processing notebooks. Third-party data remain subject to the terms and attribution requirements of their original providers.
+The midfield bridge combines **FotMob possession** with **Football-Data shot and finishing measures** and internally estimated strength controls. FotMob's team possession data were collected separately from its player statistics; folder names containing “FBref” do not change their attribution.
+
+See [Data Sources and Provenance](docs/DATA_SOURCES_AND_PROVENANCE.ipynb) for the source-to-file record. Provider pages and available fields can change; saved extracts and processing records document the historical inputs used here.
+
+Raw third-party datasets are not redistributed. Selected processed inputs and model-derived outputs are included where useful for reproducibility and permitted by the underlying data sources.
 
 ## Repository Guide
 
-The public project is organized around four layers:
+| Directory | Contents |
+|---|---|
+| `notebooks/` | The six research notebooks linked above. |
+| `docs/` | The full integrated reflection and data-provenance notebooks. |
+| `data/` | Data documentation in [README.md](data/README.md), plus `processed/` and `derived/` tables where included. |
+| `forecaster/` | `CITY_FORECASTER_STANDALONE.ipynb`, `city_online_forecast.py`, `requirements.txt`, and `season_state.json`. |
 
-```text
-man-city-football-modeling/
-│
-├── README.md
-│
-├── notebooks/
-│   ├── team_strength.ipynb
-│   │   └── opponent-adjusted multivariate team states
-│   │
-│   ├── strength_index_validation.ipynb
-│   │   └── scalar strength construction and weight validation
-│   │
-│   ├── strength_index_pca_elo_validation.ipynb
-│   │   └── home-away PCA and ClubElo validation
-│   │
-│   ├── E0_E1_bridge.ipynb
-│   │   └── promoted-team strength initialization
-│   │
-│   ├── bayesian_prior.ipynb
-│   │   └── recursive Bayesian priors and league-wide strength updates
-│   │
-│   └── dynamic_system_model.ipynb
-│       └── City residual dynamics, structural scenarios, and score forecasting
-│
-├── docs/
-│   ├── Manchester_City_Project_Full_Integrated_Reflection.ipynb
-│   │   └── full project narrative, experiments, rejected ideas, and reflection
-│   │
-│   └── DATA_SOURCES_AND_PROVENANCE.ipynb
-│       └── data sources, attribution, and dataset lineage
-│
-└── forecaster/
-    ├── CITY_FORECASTER_STANDALONE.ipynb
-    ├── city_online_forecast.py
-    ├── requirements.txt
-    └── season_state.json
-```
+The research notebooks document development and depend on their associated data and paths. The standalone forecaster is the entry point for continued use during the season.
 
-The historical research notebooks explain how the model was developed. The `forecaster/` folder is the smaller operational package intended for continued use during the season.
+## Limitations and Next Steps
 
-Raw or intermediate provider datasets are not required to run the standalone forecaster. Where data are shared, their original sources should be credited according to the provenance document.
+The City-specific sample is small. The score model assumes conditionally independent Poisson goals and uses posterior mean strengths without integrating all parameter and state uncertainty. Coaching and midfield scenarios describe associations under explicit assumptions, rather than validated causal effects.
 
-## Main Limitations
+The immediate priority is a prospective evaluation of the fixed Version 1 model: preserve forecast timing, enter completed league results, and monitor score NLL, goal RMSE, outcome Brier scores, and calibration. A possible Version 2 would share information across clubs through a hierarchical state model, with all transformations fitted inside historical training windows and new inputs evaluated against the same baselines.
 
-The current version has several important limitations:
+## AI-Assisted Development
 
-- The City-specific score-regression sample is small, and later stages of the project revisit some historical periods repeatedly.
-- The historical evidence is therefore better described as chronological comparison plus exploratory analysis than as one untouched end-to-end test.
-- The score model assumes conditional independence between City and opponent goals.
-- Forecast probabilities use posterior mean strengths rather than integrating all parameter and state uncertainty.
-- Coaching and midfield modules describe associations and conditional scenarios; they do not establish causal effects.
-- A meaningful assessment of live performance requires a genuinely prospective archive of forecasts created before matches.
-
-These limitations are part of the project rather than hidden implementation details. They directly motivate the next stage of evaluation.
-
-## Next Steps
-
-The immediate priority is to evaluate Version 1 prospectively during the 2026/27 season while keeping the model specification fixed. That includes preserving forecast timing, entering completed league results, and tracking exact-score NLL, goal RMSE, outcome Brier scores, and calibration.
-
-A later Version 2 may explore a league-wide hierarchical state model so that short-term information can be shared across clubs and opponent states can be represented directly. Any such extension should be compared against the same strength baseline under a controlled chronological design before it is added to the operational forecaster.
-
-## Project Perspective
-
-The original idea was to combine Bayesian inference, dynamic systems, coaching changes, player composition, and probabilistic score forecasting in one model. The development process ultimately suggested a more restrained conclusion: not every mathematically interesting component deserves to become a forecasting input.
-
-For me, that is one of the most useful outcomes of the project. The current model is simpler than the initial concept, but the repository preserves the reasoning, failed extensions, validation choices, and limitations that led to it.
-
-## Feedback
-
-This is an independent undergraduate project and an ongoing learning exercise. Suggestions, criticism, and discussion are welcome — especially around Bayesian sports modeling, sequential evaluation, probabilistic forecasting, or alternative ways to represent football dynamics.
+Generative AI tools supported code implementation, debugging, documentation, and language refinement. I directed the modeling questions, assumptions, experiments, and interpretation, and used the project to learn how to check generated implementations against the intended mathematics. I remain responsible for the analyses and claims presented here.
 
 ## License and Data Use
 
-No open-source license is currently granted for the original project code and documentation. Third-party football data remain subject to the terms of their respective providers. Please consult the provenance documentation before reusing or redistributing external datasets.
+No open-source license is currently granted for the original project code and documentation. Third-party football data remain subject to their providers' terms; source attribution does not itself grant permission to redistribute those datasets.
+
 
 ---
 
