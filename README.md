@@ -125,16 +125,44 @@ See [Data Sources and Provenance](docs/DATA_SOURCES_AND_PROVENANCE.ipynb) for th
 
 Raw third-party datasets are not redistributed. Selected processed inputs and model-derived outputs are included where useful for reproducibility and permitted by the underlying data sources.
 
-## Repository Guide
+## Repository Structure
 
-| Directory | Contents |
-|---|---|
-| `notebooks/` | The six research notebooks linked above. |
-| `docs/` | The full integrated reflection and data-provenance notebooks. |
-| `data/` | Data documentation in [README.md](data/README.md), plus `processed/` and `derived/` tables where included. |
-| `forecaster/` | `CITY_FORECASTER_STANDALONE.ipynb`, `city_online_forecast.py`, `requirements.txt`, and `season_state.json`. |
+```text
+man-city-football-modeling/
+│
+├── README.md
+│
+├── notebooks/
+│   ├── team_strength.ipynb
+│   ├── strength_index_validation.ipynb
+│   ├── strength_index_pca_elo_validation.ipynb
+│   ├── E0_E1_bridge.ipynb
+│   ├── bayesian_prior.ipynb
+│   └── dynamic_system_model.ipynb
+│
+├── data/
+│   ├── README.md
+│   ├── processed/
+│   │   └── selected model-ready datasets
+│   └── derived/
+│       └── intermediate and model-generated outputs
+│
+├── docs/
+│   ├── Manchester_City_Project_Full_Integrated_Reflection.ipynb
+│   └── DATA_SOURCES_AND_PROVENANCE.ipynb
+│
+└── forecaster/
+    ├── CITY_FORECASTER_STANDALONE.ipynb
+    ├── city_online_forecast.py
+    ├── requirements.txt
+    └── season_state.json
+```
 
-The research notebooks document development and depend on their associated data and paths. The standalone forecaster is the entry point for continued use during the season.
+The six notebooks in `notebooks/` document the main modeling pipeline.
+The `docs/` folder contains the integrated project narrative and data-provenance record.
+Selected processed and derived datasets are included in `data/`, while raw third-party datasets are not redistributed.
+The `forecaster/` folder contains the standalone operational Version 1 predictor.
+
 
 ## Limitations and Next Steps
 
