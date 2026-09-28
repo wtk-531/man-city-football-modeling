@@ -1,0 +1,5 @@
+Parameter,Value,Description
+Q0,0.9816907997148883,Global preseason uncertainty scale
+h,0.2828943874366233,Home-advantage intercept in goal difference
+beta,0.36858199977162337,Sensitivity of expected goal difference to latent strength difference
+R,2.7192778604934182,Match-level residual variance

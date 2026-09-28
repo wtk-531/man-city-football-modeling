@@ -1,0 +1,4 @@
+Team,Championship_Season,S_E1,Prior_Mean_S,Promotion_Route,Bridge_Model
+Coventry,2025-26,2.075789542286082,-1.613452778167823,Automatic,Constant mean
+Ipswich,2025-26,2.184446955370099,-1.613452778167823,Automatic,Constant mean
+Hull,2025-26,-0.32300068138380755,-1.613452778167823,Play-off,Constant mean

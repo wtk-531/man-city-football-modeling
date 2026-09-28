@@ -1,0 +1,327 @@
+{
+  "schema_version": 1,
+  "config": {
+    "bayes": {
+      "Q0": 0.9816907997148884,
+      "R": 2.7192778604934182,
+      "beta": 0.3685819997716233,
+      "h": 0.2828943874366233
+    },
+    "city": "Man City",
+    "prior": [
+      {
+        "Prior_Mean": 3.2031047897615386,
+        "Prior_Variance": 0.8482325856199644,
+        "Team": "Arsenal"
+      },
+      {
+        "Prior_Mean": 0.7965900652439026,
+        "Prior_Variance": 1.0279746465054167,
+        "Team": "Aston Villa"
+      },
+      {
+        "Prior_Mean": 0.5155074972293106,
+        "Prior_Variance": 0.8360464053547674,
+        "Team": "Bournemouth"
+      },
+      {
+        "Prior_Mean": 0.5110847996461739,
+        "Prior_Variance": 1.0685276650213424,
+        "Team": "Brentford"
+      },
+      {
+        "Prior_Mean": 0.6525181344045736,
+        "Prior_Variance": 0.873611587324325,
+        "Team": "Brighton"
+      },
+      {
+        "Prior_Mean": 0.9818051969012124,
+        "Prior_Variance": 1.0599346038366713,
+        "Team": "Chelsea"
+      },
+      {
+        "Prior_Mean": -1.613452778167823,
+        "Prior_Variance": 1.021632821249428,
+        "Team": "Coventry"
+      },
+      {
+        "Prior_Mean": -0.1718790115132895,
+        "Prior_Variance": 0.9664664477016128,
+        "Team": "Crystal Palace"
+      },
+      {
+        "Prior_Mean": 0.0103843719286542,
+        "Prior_Variance": 0.8372139240872174,
+        "Team": "Everton"
+      },
+      {
+        "Prior_Mean": 0.0580798889361556,
+        "Prior_Variance": 0.7930664831279644,
+        "Team": "Fulham"
+      },
+      {
+        "Prior_Mean": -1.613452778167823,
+        "Prior_Variance": 1.0455144388366016,
+        "Team": "Hull"
+      },
+      {
+        "Prior_Mean": -1.613452778167823,
+        "Prior_Variance": 0.8053508538831845,
+        "Team": "Ipswich"
+      },
+      {
+        "Team": "Leeds",
+        "Prior_Mean": -0.7362129430577615,
+        "Prior_Variance": 0.9357663180295316
+      },
+      {
+        "Prior_Mean": 1.7090698463215657,
+        "Prior_Variance": 1.0145358354597551,
+        "Team": "Liverpool"
+      },
+      {
+        "Prior_Mean": 3.026023571113532,
+        "Prior_Variance": 1.0117226983427043,
+        "Team": "Man City"
+      },
+      {
+        "Prior_Mean": 1.1034521082621385,
+        "Prior_Variance": 1.070141938633438,
+        "Team": "Man United"
+      },
+      {
+        "Prior_Mean": 0.7321163660051301,
+        "Prior_Variance": 0.9156174477606588,
+        "Team": "Newcastle"
+      },
+      {
+        "Prior_Mean": 0.1354933619539792,
+        "Prior_Variance": 0.976729934456722,
+        "Team": "Nott'm Forest"
+      },
+      {
+        "Team": "Sunderland",
+        "Prior_Mean": -0.681340851032558,
+        "Prior_Variance": 0.9734437765579336
+      },
+      {
+        "Prior_Mean": -0.0547131992401233,
+        "Prior_Variance": 1.0480898609565736,
+        "Team": "Tottenham"
+      }
+    ],
+    "score_models": {
+      "Strength_Home": {
+        "features": [
+          "Delta_S",
+          "Home"
+        ],
+        "targets": {
+          "GA": {
+            "coefficients": [
+              -0.123146,
+              -0.127614
+            ],
+            "intercept": 0.409703
+          },
+          "GF": {
+            "coefficients": [
+              0.119089,
+              0.266306
+            ],
+            "intercept": 0.235581
+          }
+        }
+      }
+    },
+    "season": "2026/27",
+    "season_end": "2027-06-30",
+    "season_start": "2026-07-01",
+    "selected_model": "Strength_Home",
+    "training_cutoff": "2026-05-24"
+  },
+  "results": [
+    {
+      "Date": "2026-08-23",
+      "HomeTeam": "Man City",
+      "AwayTeam": "Bournemouth",
+      "FTHG": 2,
+      "FTAG": 1
+    },
+    {
+      "Date": "2026-08-28",
+      "HomeTeam": "Crystal Palace",
+      "AwayTeam": "Man City",
+      "FTHG": 1,
+      "FTAG": 4
+    },
+    {
+      "Date": "2026-09-05",
+      "HomeTeam": "Man City",
+      "AwayTeam": "Coventry",
+      "FTHG": 1,
+      "FTAG": 0
+    },
+    {
+      "Date": "2026-09-13",
+      "HomeTeam": "Man United",
+      "AwayTeam": "Man City",
+      "FTHG": 0,
+      "FTAG": 1
+    },
+    {
+      "Date": "2026-09-20",
+      "HomeTeam": "Man City",
+      "AwayTeam": "Sunderland",
+      "FTHG": 5,
+      "FTAG": 3
+    }
+  ],
+  "forecasts": [],
+  "config_revisions": [
+    {
+      "changed_utc": "2026-09-27T07:23:29.807367+00:00",
+      "reason": "Align 2026/27 EPL membership; recover archived 2025/26 terminal priors.",
+      "previous_config": {
+        "bayes": {
+          "Q0": 0.9816907997148884,
+          "R": 2.7192778604934182,
+          "beta": 0.3685819997716233,
+          "h": 0.2828943874366233
+        },
+        "city": "Man City",
+        "prior": [
+          {
+            "Prior_Mean": 3.2031047897615386,
+            "Prior_Variance": 0.8482325856199644,
+            "Team": "Arsenal"
+          },
+          {
+            "Prior_Mean": 0.7965900652439026,
+            "Prior_Variance": 1.0279746465054167,
+            "Team": "Aston Villa"
+          },
+          {
+            "Prior_Mean": 0.5155074972293106,
+            "Prior_Variance": 0.8360464053547674,
+            "Team": "Bournemouth"
+          },
+          {
+            "Prior_Mean": 0.5110847996461739,
+            "Prior_Variance": 1.0685276650213424,
+            "Team": "Brentford"
+          },
+          {
+            "Prior_Mean": 0.6525181344045736,
+            "Prior_Variance": 0.873611587324325,
+            "Team": "Brighton"
+          },
+          {
+            "Prior_Mean": 0.9818051969012124,
+            "Prior_Variance": 1.0599346038366713,
+            "Team": "Chelsea"
+          },
+          {
+            "Prior_Mean": -1.613452778167823,
+            "Prior_Variance": 1.021632821249428,
+            "Team": "Coventry"
+          },
+          {
+            "Prior_Mean": -0.1718790115132895,
+            "Prior_Variance": 0.9664664477016128,
+            "Team": "Crystal Palace"
+          },
+          {
+            "Prior_Mean": 0.0103843719286542,
+            "Prior_Variance": 0.8372139240872174,
+            "Team": "Everton"
+          },
+          {
+            "Prior_Mean": 0.0580798889361556,
+            "Prior_Variance": 0.7930664831279644,
+            "Team": "Fulham"
+          },
+          {
+            "Prior_Mean": -1.613452778167823,
+            "Prior_Variance": 1.0455144388366016,
+            "Team": "Hull"
+          },
+          {
+            "Prior_Mean": -1.613452778167823,
+            "Prior_Variance": 0.8053508538831845,
+            "Team": "Ipswich"
+          },
+          {
+            "Prior_Mean": 1.7090698463215657,
+            "Prior_Variance": 1.0145358354597551,
+            "Team": "Liverpool"
+          },
+          {
+            "Prior_Mean": 3.026023571113532,
+            "Prior_Variance": 1.0117226983427043,
+            "Team": "Man City"
+          },
+          {
+            "Prior_Mean": 1.1034521082621385,
+            "Prior_Variance": 1.070141938633438,
+            "Team": "Man United"
+          },
+          {
+            "Prior_Mean": 0.7321163660051301,
+            "Prior_Variance": 0.9156174477606588,
+            "Team": "Newcastle"
+          },
+          {
+            "Prior_Mean": 0.1354933619539792,
+            "Prior_Variance": 0.976729934456722,
+            "Team": "Nott'm Forest"
+          },
+          {
+            "Prior_Mean": -0.0547131992401233,
+            "Prior_Variance": 1.0480898609565736,
+            "Team": "Tottenham"
+          },
+          {
+            "Prior_Mean": -0.906279346754054,
+            "Prior_Variance": 1.0977004047630483,
+            "Team": "West Ham"
+          },
+          {
+            "Prior_Mean": -1.9213615292009336,
+            "Prior_Variance": 1.075793197668198,
+            "Team": "Wolves"
+          }
+        ],
+        "score_models": {
+          "Strength_Home": {
+            "features": [
+              "Delta_S",
+              "Home"
+            ],
+            "targets": {
+              "GA": {
+                "coefficients": [
+                  -0.123146,
+                  -0.127614
+                ],
+                "intercept": 0.409703
+              },
+              "GF": {
+                "coefficients": [
+                  0.119089,
+                  0.266306
+                ],
+                "intercept": 0.235581
+              }
+            }
+          }
+        },
+        "season": "2026/27",
+        "season_end": "2027-06-30",
+        "season_start": "2026-07-01",
+        "selected_model": "Strength_Home",
+        "training_cutoff": "2026-05-24"
+      }
+    }
+  ]
+}
