@@ -176,7 +176,8 @@ Generative AI tools supported code implementation, debugging, documentation, and
 
 ## License and Data Use
 
-No open-source license is currently granted for the original project code and documentation. Third-party football data remain subject to their providers' terms; source attribution does not itself grant permission to redistribute those datasets.
+The original project code and documentation are licensed under the MIT License. See the `LICENSE` file for details.
+Third-party football data remain subject to their respective providers' terms and are not covered by the MIT License.
 
 
 ---
