@@ -106,6 +106,8 @@ python -m pip install -r requirements.txt
 
 Keep and back up `season_state.json` between sessions. It stores the frozen parameters, opening priors, recorded results, and saved forecasts needed to continue the season. Only forecasts recorded before their matches count as prospective evidence; retrospective replays should be identified separately.
 
+For instructions on updating match results, generating forecasts, and tracking predictions throughout the season, see the [Forecaster User Guide](forecaster/FORECASTER_GUIDE.md).
+
 ## Data Sources
 
 The table identifies the historical sources used during development. Some support the operational model; others support validation or exploratory work.
